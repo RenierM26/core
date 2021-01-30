@@ -226,7 +226,11 @@ buienradar==1.0.4
 caldav==0.7.1
 
 # homeassistant.scripts.check_config
+<<<<<<< HEAD
 colorlog==4.7.2
+=======
+colorlog==4.5.0
+>>>>>>> Update Ezviz Component tests
 
 # homeassistant.components.color_extractor
 colorthief==0.2.1
@@ -713,6 +717,9 @@ pyeconet==0.1.12
 
 # homeassistant.components.everlights
 pyeverlights==0.1.0
+
+# homeassistant.components.ezviz
+pyezviz==0.1.6.1
 
 # homeassistant.components.fido
 pyfido==2.1.1
