@@ -739,10 +739,14 @@ pyeverlights==0.1.0
 
 # homeassistant.components.ezviz
 <<<<<<< HEAD
+<<<<<<< HEAD
 pyezviz==0.1.6.1
 =======
 pyezviz==0.1.6.6
 >>>>>>> Update Ezviz component
+=======
+pyezviz==0.1.7.0
+>>>>>>> Add sensor platforms
 
 # homeassistant.components.fido
 pyfido==2.1.1
