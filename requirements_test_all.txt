@@ -226,15 +226,7 @@ buienradar==1.0.4
 caldav==0.7.1
 
 # homeassistant.scripts.check_config
-<<<<<<< HEAD
-<<<<<<< HEAD
 colorlog==4.7.2
-=======
-colorlog==4.5.0
->>>>>>> Update Ezviz Component tests
-=======
-colorlog==4.7.2
->>>>>>> Update Ezviz component
 
 # homeassistant.components.color_extractor
 colorthief==0.2.1
@@ -278,11 +270,7 @@ distro==1.5.0
 doorbirdpy==2.1.0
 
 # homeassistant.components.dsmr
-<<<<<<< HEAD
 dsmr_parser==0.28
-=======
-dsmr_parser==0.25
->>>>>>> Update Ezviz component
 
 # homeassistant.components.dynalite
 dynalite_devices==0.1.46
@@ -379,15 +367,7 @@ google-api-python-client==1.6.4
 google-cloud-pubsub==2.1.0
 
 # homeassistant.components.nest
-<<<<<<< HEAD
 google-nest-sdm==0.2.12
-=======
-<<<<<<< HEAD
-google-nest-sdm==0.2.10
-=======
-google-nest-sdm==0.2.9
->>>>>>> Update Ezviz component
->>>>>>> Update Ezviz component
 
 # homeassistant.components.gree
 greeclimate==0.10.3
@@ -517,12 +497,9 @@ mullvad-api==1.0.0
 # homeassistant.components.tts
 mutagen==1.45.1
 
-<<<<<<< HEAD
 # homeassistant.components.keenetic_ndms2
 ndms2_client==0.1.1
 
-=======
->>>>>>> Update Ezviz component
 # homeassistant.components.ness_alarm
 nessclient==0.9.15
 
@@ -738,15 +715,7 @@ pyeconet==0.1.12
 pyeverlights==0.1.0
 
 # homeassistant.components.ezviz
-<<<<<<< HEAD
-<<<<<<< HEAD
-pyezviz==0.1.6.1
-=======
-pyezviz==0.1.6.6
->>>>>>> Update Ezviz component
-=======
 pyezviz==0.1.7.0
->>>>>>> Add sensor platforms
 
 # homeassistant.components.fido
 pyfido==2.1.1
