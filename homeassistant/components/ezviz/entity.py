@@ -11,37 +11,6 @@ from .const import DOMAIN, MANUFACTURER
 from .coordinator import EzvizDataUpdateCoordinator
 
 
-class EzvizEntity(CoordinatorEntity[EzvizDataUpdateCoordinator], Entity):
-    """Generic entity encapsulating common features of EZVIZ device."""
-
-    _attr_has_entity_name = True
-
-    def __init__(
-        self,
-        coordinator: EzvizDataUpdateCoordinator,
-        serial: str,
-    ) -> None:
-        """Initialize the entity."""
-        super().__init__(coordinator)
-        self._serial = serial
-        self._camera_name = self.data["name"]
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, serial)},
-            connections={
-                (CONNECTION_NETWORK_MAC, self.data["mac_address"]),
-            },
-            manufacturer=MANUFACTURER,
-            model=self.data["device_sub_category"],
-            name=self.data["name"],
-            sw_version=self.data["version"],
-        )
-
-    @property
-    def data(self) -> dict[str, Any]:
-        """Return coordinator data for this entity."""
-        return self.coordinator.data[self._serial]
-
-# Try cleanup
 class EzvizBaseEntity(Entity):
     """Generic entity for EZVIZ individual poll entities."""
 
@@ -71,3 +40,16 @@ class EzvizBaseEntity(Entity):
     def data(self) -> dict[str, Any]:
         """Return coordinator data for this entity."""
         return self.coordinator.data[self._serial]
+
+
+class EzvizEntity(CoordinatorEntity[EzvizDataUpdateCoordinator], EzvizBaseEntity):  # type: ignore[misc]
+    """Generic entity encapsulating common features of EZVIZ device."""
+
+    def __init__(
+        self,
+        coordinator: EzvizDataUpdateCoordinator,
+        serial: str,
+    ) -> None:
+        """Initialize the entity."""
+        CoordinatorEntity.__init__(self, coordinator)
+        EzvizBaseEntity.__init__(self, coordinator, serial)
