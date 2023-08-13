@@ -41,7 +41,7 @@ class EzvizEntity(CoordinatorEntity[EzvizDataUpdateCoordinator], Entity):
         """Return coordinator data for this entity."""
         return self.coordinator.data[self._serial]
 
-
+# Try cleanup
 class EzvizBaseEntity(Entity):
     """Generic entity for EZVIZ individual poll entities."""
 
