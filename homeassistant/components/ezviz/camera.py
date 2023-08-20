@@ -217,6 +217,8 @@ class EzvizCamera(EzvizEntity, Camera):
     ) -> bytes | None:
         """Return a frame from the camera stream."""
         if self._rtsp_stream is None:
+            if self._password:
+                await self.stream_source()
             return None
         return await ffmpeg.async_get_image(
             self.hass, self._rtsp_stream, width=width, height=height
