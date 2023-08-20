@@ -34,6 +34,7 @@ from .const import (
     ATTR_SERIAL,
     ATTR_SPEED,
     ATTR_TYPE,
+    ATTR_TYPE_CAMERA,
     CONF_FFMPEG_ARGUMENTS,
     DATA_COORDINATOR,
     DEFAULT_CAMERA_USERNAME,
@@ -65,18 +66,17 @@ async def async_setup_entry(
     ]
 
     camera_entities = []
+    camera_entry_ids = {
+        item.unique_id: item
+        for item in hass.config_entries.async_entries(DOMAIN)
+        if item.data.get("type") == ATTR_TYPE_CAMERA and item.source != SOURCE_IGNORE
+    }
 
     for camera, value in coordinator.data.items():
-        camera_rtsp_entry = [
-            item
-            for item in hass.config_entries.async_entries(DOMAIN)
-            if item.unique_id == camera and item.source != SOURCE_IGNORE
-        ]
-
-        if camera_rtsp_entry:
-            ffmpeg_arguments = camera_rtsp_entry[0].options[CONF_FFMPEG_ARGUMENTS]
-            camera_username = camera_rtsp_entry[0].data[CONF_USERNAME]
-            camera_password = camera_rtsp_entry[0].data[CONF_PASSWORD]
+        if camera_entry_ids.get(camera):
+            ffmpeg_arguments = camera_entry_ids[camera].options[CONF_FFMPEG_ARGUMENTS]
+            camera_username = camera_entry_ids[camera].data[CONF_USERNAME]
+            camera_password = camera_entry_ids[camera].data[CONF_PASSWORD]
 
             camera_rtsp_stream = f"rtsp://{camera_username}:{camera_password}@{value['local_ip']}:{value['local_rtsp_port']}{ffmpeg_arguments}"
             _LOGGER.debug(
@@ -98,13 +98,7 @@ async def async_setup_entry(
                 },
             )
 
-            _LOGGER.warning(
-                (
-                    "Found camera with serial %s without configuration. Please go to"
-                    " integration to complete setup"
-                ),
-                camera,
-            )
+            _LOGGER.debug("Found camera with serial %s without configuration", camera)
 
             ffmpeg_arguments = DEFAULT_FFMPEG_ARGUMENTS
             camera_username = DEFAULT_CAMERA_USERNAME
@@ -119,7 +113,6 @@ async def async_setup_entry(
                 camera_username,
                 camera_password,
                 camera_rtsp_stream,
-                value["local_rtsp_port"],
                 ffmpeg_arguments,
             )
         )
@@ -180,17 +173,15 @@ class EzvizCamera(EzvizEntity, Camera):
         camera_username: str,
         camera_password: str | None,
         camera_rtsp_stream: str | None,
-        local_rtsp_port: int,
         ffmpeg_arguments: str | None,
     ) -> None:
         """Initialize a EZVIZ security camera."""
-        super().__init__(coordinator, serial)
+        EzvizEntity.__init__(self, coordinator, serial)
         Camera.__init__(self)
         self.stream_options[CONF_USE_WALLCLOCK_AS_TIMESTAMPS] = True
         self._username = camera_username
         self._password = camera_password
         self._rtsp_stream = camera_rtsp_stream
-        self._local_rtsp_port = local_rtsp_port
         self._ffmpeg_arguments = ffmpeg_arguments
         self._ffmpeg = get_ffmpeg_manager(hass)
         self._attr_unique_id = serial
@@ -248,15 +239,16 @@ class EzvizCamera(EzvizEntity, Camera):
         if self._password is None:
             return None
         local_ip = self.data["local_ip"]
+        rtsp_port = self.data["local_rtsp_port"]
         self._rtsp_stream = (
             f"rtsp://{self._username}:{self._password}@"
-            f"{local_ip}:{self._local_rtsp_port}{self._ffmpeg_arguments}"
+            f"{local_ip}:{rtsp_port}{self._ffmpeg_arguments}"
         )
         _LOGGER.debug(
             "Configuring Camera %s with ip: %s rtsp port: %s ffmpeg arguments: %s",
             self._serial,
             local_ip,
-            self._local_rtsp_port,
+            rtsp_port,
             self._ffmpeg_arguments,
         )
 
@@ -288,17 +280,6 @@ class EzvizCamera(EzvizEntity, Camera):
 
     def perform_sound_alarm(self, enable: int) -> None:
         """Sound the alarm on a camera."""
-        ir.async_create_issue(
-            self.hass,
-            DOMAIN,
-            "service_depreciation_sound_alarm",
-            breaks_in_ha_version="2024.3.0",
-            is_fixable=True,
-            is_persistent=True,
-            severity=ir.IssueSeverity.WARNING,
-            translation_key="service_depreciation_sound_alarm",
-        )
-
         try:
             self.coordinator.ezviz_client.sound_alarm(self._serial, enable)
         except HTTPError as err:
