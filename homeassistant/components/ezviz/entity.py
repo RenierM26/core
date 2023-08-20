@@ -43,7 +43,7 @@ class EzvizBaseEntity(Entity):
 
 
 class EzvizEntity(CoordinatorEntity[EzvizDataUpdateCoordinator], EzvizBaseEntity):  # type: ignore[misc]
-    """Generic entity encapsulating common features of EZVIZ device."""
+    """Generic entity for EZVIZ coordinator poll devices."""
 
     def __init__(
         self,
