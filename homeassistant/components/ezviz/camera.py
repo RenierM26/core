@@ -74,18 +74,9 @@ async def async_setup_entry(
 
     for camera, value in coordinator.data.items():
         if camera_entry_ids.get(camera):
-            ffmpeg_arguments = camera_entry_ids[camera].options[CONF_FFMPEG_ARGUMENTS]
             camera_username = camera_entry_ids[camera].data[CONF_USERNAME]
             camera_password = camera_entry_ids[camera].data[CONF_PASSWORD]
-
-            camera_rtsp_stream = f"rtsp://{camera_username}:{camera_password}@{value['local_ip']}:{value['local_rtsp_port']}{ffmpeg_arguments}"
-            _LOGGER.debug(
-                "Configuring Camera %s with ip: %s rtsp port: %s ffmpeg arguments: %s",
-                camera,
-                value["local_ip"],
-                value["local_rtsp_port"],
-                ffmpeg_arguments,
-            )
+            ffmpeg_arguments = camera_entry_ids[camera].options[CONF_FFMPEG_ARGUMENTS]
 
         else:
             discovery_flow.async_create_flow(
@@ -103,7 +94,6 @@ async def async_setup_entry(
             ffmpeg_arguments = DEFAULT_FFMPEG_ARGUMENTS
             camera_username = DEFAULT_CAMERA_USERNAME
             camera_password = None
-            camera_rtsp_stream = ""
 
         camera_entities.append(
             EzvizCamera(
@@ -112,7 +102,6 @@ async def async_setup_entry(
                 camera,
                 camera_username,
                 camera_password,
-                camera_rtsp_stream,
                 ffmpeg_arguments,
             )
         )
@@ -172,7 +161,6 @@ class EzvizCamera(EzvizEntity, Camera):
         serial: str,
         camera_username: str,
         camera_password: str | None,
-        camera_rtsp_stream: str | None,
         ffmpeg_arguments: str | None,
     ) -> None:
         """Initialize a EZVIZ security camera."""
@@ -181,7 +169,7 @@ class EzvizCamera(EzvizEntity, Camera):
         self.stream_options[CONF_USE_WALLCLOCK_AS_TIMESTAMPS] = True
         self._username = camera_username
         self._password = camera_password
-        self._rtsp_stream = camera_rtsp_stream
+        self._rtsp_stream = ""
         self._ffmpeg_arguments = ffmpeg_arguments
         self._ffmpeg = get_ffmpeg_manager(hass)
         self._attr_unique_id = serial
