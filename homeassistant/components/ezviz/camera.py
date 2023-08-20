@@ -169,7 +169,7 @@ class EzvizCamera(EzvizEntity, Camera):
         self.stream_options[CONF_USE_WALLCLOCK_AS_TIMESTAMPS] = True
         self._username = camera_username
         self._password = camera_password
-        self._rtsp_stream = ""
+        self._rtsp_stream: str | None = None
         self._ffmpeg_arguments = ffmpeg_arguments
         self._ffmpeg = get_ffmpeg_manager(hass)
         self._attr_unique_id = serial
